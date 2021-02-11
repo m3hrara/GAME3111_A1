@@ -7,6 +7,52 @@
 
 using namespace DirectX;
 
+GeometryGenerator::MeshData GeometryGenerator::CreateTorus(float outterradius, float innerRadius, uint32 sliceCount, uint32 stackCount)
+{
+	MeshData meshData;
+
+	// The steps for each of the separate rotations
+	float thetaStep = 2.0f * XM_PI / sliceCount; 
+	float phiStep = 2.0f * XM_PI / stackCount;
+
+	// For each slice around the circumference of the torus
+	for (uint32 i = 0; i <= sliceCount; ++i)
+	{
+		float theta = i * thetaStep;
+
+		// for each vertex around the cross section
+		for (uint32 j = 0; j <= stackCount; ++j)
+		{
+			float phi = j * phiStep;
+
+			Vertex v;
+
+			v.Position.x = outterradius * cosf(theta) + innerRadius * sinf(phi) * cosf(theta);
+			v.Position.y = innerRadius * cosf(phi);
+			v.Position.z = outterradius * sinf(theta) + innerRadius * sinf(phi) * sinf(theta);
+
+			meshData.Vertices.push_back(v);
+		}
+	}
+
+	uint32 baseIndex = 0;
+	uint32 ringVertexCount = sliceCount + 1;
+	for (uint32 i = 0; i < sliceCount; ++i)
+	{
+		for (uint32 j = 0; j < stackCount; ++j)
+		{
+			meshData.Indices32.push_back(i * (sliceCount + 1) + (j + 1));
+			meshData.Indices32.push_back(i * (sliceCount + 1) + j);
+			meshData.Indices32.push_back((i + 1) * (sliceCount + 1) + j);
+
+			meshData.Indices32.push_back(i * (sliceCount + 1) + (j + 1));
+			meshData.Indices32.push_back((i + 1) * (sliceCount + 1) + j);
+			meshData.Indices32.push_back((i + 1) * (sliceCount + 1) + (j + 1));
+		}
+	}
+
+	return meshData;
+}
 GeometryGenerator::MeshData GeometryGenerator::CreateBox(float width, float height, float depth, uint32 numSubdivisions)
 {
     MeshData meshData;

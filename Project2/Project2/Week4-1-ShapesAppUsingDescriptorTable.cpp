@@ -587,7 +587,7 @@ void ShapesApp::BuildShapeGeometry()
 {
     GeometryGenerator geoGen;
     GeometryGenerator::MeshData box = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); // ADD HERE
-    GeometryGenerator::MeshData outerWall = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); 
+    GeometryGenerator::MeshData outterWall = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); 
     GeometryGenerator::MeshData tower = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); 
     GeometryGenerator::MeshData gate = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); 
     GeometryGenerator::MeshData grid = geoGen.CreateGrid(70.0f, 70.0f, 60, 40);
@@ -601,6 +601,7 @@ void ShapesApp::BuildShapeGeometry()
     GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1.0f, 1.0f, 1.0f, 1);
     GeometryGenerator::MeshData charm = geoGen.CreateDiamond(1.0f, 1.0f, 1.0f, 1);
     GeometryGenerator::MeshData prism = geoGen.CreateTriangularPrism(1.0f, 1.0f, 1);
+    GeometryGenerator::MeshData torus = geoGen.CreateTorus(2.0f, 0.5f, 20,20);
 
     //
     // We are concatenating all the geometry into one big vertex/index buffer.  So
@@ -609,8 +610,8 @@ void ShapesApp::BuildShapeGeometry()
 
     // Cache the vertex offsets to each object in the concatenated vertex buffer.
     UINT boxVertexOffset = 0; // ADD HERE
-    UINT outerWallVertexOffset = boxVertexOffset + (UINT)box.Vertices.size();
-    UINT towerVertexOffset = outerWallVertexOffset + (UINT)outerWall.Vertices.size();
+    UINT outterWallVertexOffset = boxVertexOffset + (UINT)box.Vertices.size();
+    UINT towerVertexOffset = outterWallVertexOffset + (UINT)outterWall.Vertices.size();
     UINT gateVertexOffset = towerVertexOffset + (UINT)tower.Vertices.size();
     UINT gridVertexOffset = gateVertexOffset + (UINT)gate.Vertices.size();
     UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
@@ -623,12 +624,13 @@ void ShapesApp::BuildShapeGeometry()
     UINT diamondVertexOffset = truncatedPyramidVertexOffset + (UINT)truncatedPyramid.Vertices.size();
     UINT charmVertexOffset = diamondVertexOffset + (UINT)diamond.Vertices.size();
     UINT prismVertexOffset = charmVertexOffset + (UINT)charm.Vertices.size();
+    UINT torusVertexOffset = prismVertexOffset + (UINT)prism.Vertices.size();
 
 
     // Cache the starting index for each object in the concatenated index buffer.
     UINT boxIndexOffset = 0; // ADD HERE
-    UINT outerWallIndexOffset = boxIndexOffset + (UINT)box.Indices32.size();
-    UINT towerIndexOffset = outerWallIndexOffset + (UINT)outerWall.Indices32.size();
+    UINT outterWallIndexOffset = boxIndexOffset + (UINT)box.Indices32.size();
+    UINT towerIndexOffset = outterWallIndexOffset + (UINT)outterWall.Indices32.size();
     UINT gateIndexOffset = towerIndexOffset + (UINT)tower.Indices32.size();
     UINT gridIndexOffset = gateIndexOffset + (UINT)gate.Indices32.size();
     UINT sphereIndexOffset = gridIndexOffset + (UINT)grid.Indices32.size();
@@ -641,6 +643,7 @@ void ShapesApp::BuildShapeGeometry()
     UINT diamondIndexOffset = truncatedPyramidIndexOffset + (UINT)truncatedPyramid.Indices32.size();
     UINT charmIndexOffset = diamondIndexOffset + (UINT)diamond.Indices32.size();
     UINT prismIndexOffset = charmIndexOffset + (UINT)charm.Indices32.size();
+    UINT torusIndexOffset = prismIndexOffset + (UINT)prism.Indices32.size();
 
 
 
@@ -652,10 +655,10 @@ void ShapesApp::BuildShapeGeometry()
     boxSubmesh.StartIndexLocation = boxIndexOffset;
     boxSubmesh.BaseVertexLocation = boxVertexOffset;
 
-    SubmeshGeometry outerWallSubmesh;
-    outerWallSubmesh.IndexCount = (UINT)outerWall.Indices32.size();
-    outerWallSubmesh.StartIndexLocation = outerWallIndexOffset;
-    outerWallSubmesh.BaseVertexLocation = outerWallVertexOffset;
+    SubmeshGeometry outterWallSubmesh;
+    outterWallSubmesh.IndexCount = (UINT)outterWall.Indices32.size();
+    outterWallSubmesh.StartIndexLocation = outterWallIndexOffset;
+    outterWallSubmesh.BaseVertexLocation = outterWallVertexOffset;
     
     SubmeshGeometry towerWallSubmesh;
     towerWallSubmesh.IndexCount = (UINT)tower.Indices32.size();
@@ -725,6 +728,11 @@ void ShapesApp::BuildShapeGeometry()
     prismSubmesh.StartIndexLocation = prismIndexOffset;
     prismSubmesh.BaseVertexLocation = prismVertexOffset;
 
+    SubmeshGeometry torusSubmesh;
+    torusSubmesh.IndexCount = (UINT)torus.Indices32.size();
+    torusSubmesh.StartIndexLocation = torusIndexOffset;
+    torusSubmesh.BaseVertexLocation = torusVertexOffset;
+
     //
     // Extract the vertex elements we are interested in and pack the
     // vertices of all the meshes into one vertex buffer.
@@ -732,7 +740,7 @@ void ShapesApp::BuildShapeGeometry()
 
     auto totalVertexCount =
         box.Vertices.size() +
-        outerWall.Vertices.size() +
+        outterWall.Vertices.size() +
         tower.Vertices.size() +
         gate.Vertices.size() +
         grid.Vertices.size() +
@@ -746,6 +754,7 @@ void ShapesApp::BuildShapeGeometry()
         diamond.Vertices.size() +
         charm.Vertices.size() +
         prism.Vertices.size();
+        torus.Vertices.size();
 
 
     std::vector<Vertex> vertices(totalVertexCount);
@@ -754,13 +763,13 @@ void ShapesApp::BuildShapeGeometry()
     for (size_t i = 0; i < box.Vertices.size(); ++i, ++k) // ADD HERE
     {
         vertices[k].Pos = box.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(0.63f, 0.32f, 0.17f, 1.0f);
+        vertices[k].Color = XMFLOAT4(0.9f, 0.81f, 0.62f, 1.0f);
     }
 
-    for (size_t i = 0; i < outerWall.Vertices.size(); ++i, ++k)
+    for (size_t i = 0; i < outterWall.Vertices.size(); ++i, ++k)
     {
-        vertices[k].Pos = outerWall.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::AliceBlue);
+        vertices[k].Pos = outterWall.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(0.8f, 0.91f, 0.96f, 1.0f);
     }
     
     for (size_t i = 0; i < tower.Vertices.size(); ++i, ++k)
@@ -772,13 +781,13 @@ void ShapesApp::BuildShapeGeometry()
     for (size_t i = 0; i < gate.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = gate.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Black);
+        vertices[k].Color = XMFLOAT4(0.2f,0.14f,0.098f, 1.0f);
     }
     
     for (size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = grid.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(0.33f, 0.42f, 0.18f, 1.0f);
+        vertices[k].Color = XMFLOAT4(0.43f, 0.686f, 0.52f, 1.0f);
     }
 
     for (size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
@@ -809,7 +818,7 @@ void ShapesApp::BuildShapeGeometry()
     for (size_t i = 0; i < cone.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = cone.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(0.99f, 0.49f, 0.61f, 1.0f);
+        vertices[k].Color = XMFLOAT4(0.9f, 0.49f, 0.61f, 1.0f);
     }
     // MARY 6-3
     for (size_t i = 0; i < pyramid.Vertices.size(); ++i, ++k)
@@ -827,7 +836,7 @@ void ShapesApp::BuildShapeGeometry()
     for (size_t i = 0; i < diamond.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = diamond.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Crimson);
+        vertices[k].Color = XMFLOAT4(0.0f, 0.19f, 0.32f, 1.0f);
     }
     
     for (size_t i = 0; i < charm.Vertices.size(); ++i, ++k)
@@ -839,11 +848,17 @@ void ShapesApp::BuildShapeGeometry()
     for (size_t i = 0; i < prism.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = prism.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::DarkRed);
+        vertices[k].Color = XMFLOAT4(0.79f, 0.2f, 0.2f, 1.0f);
+    }
+
+    for (size_t i = 0; i < torus.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = torus.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(1.0f, 0.66f, 0.11, 1.0f);
     }
     std::vector<std::uint16_t> indices;
     indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16())); // ADD HERE
-    indices.insert(indices.end(), std::begin(outerWall.GetIndices16()), std::end(outerWall.GetIndices16()));
+    indices.insert(indices.end(), std::begin(outterWall.GetIndices16()), std::end(outterWall.GetIndices16()));
     indices.insert(indices.end(), std::begin(tower.GetIndices16()), std::end(tower.GetIndices16()));
     indices.insert(indices.end(), std::begin(gate.GetIndices16()), std::end(gate.GetIndices16()));
     indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
@@ -857,6 +872,8 @@ void ShapesApp::BuildShapeGeometry()
     indices.insert(indices.end(), std::begin(diamond.GetIndices16()), std::end(diamond.GetIndices16()));
     indices.insert(indices.end(), std::begin(charm.GetIndices16()), std::end(charm.GetIndices16()));
     indices.insert(indices.end(), std::begin(prism.GetIndices16()), std::end(prism.GetIndices16()));
+    indices.insert(indices.end(), std::begin(torus.GetIndices16()), std::end(torus.GetIndices16()));
+
 
 
     const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
@@ -883,7 +900,7 @@ void ShapesApp::BuildShapeGeometry()
     geo->IndexBufferByteSize = ibByteSize;
 
     geo->DrawArgs["box"] = boxSubmesh; // ADD HERE
-    geo->DrawArgs["outerWall"] = outerWallSubmesh;
+    geo->DrawArgs["outterWall"] = outterWallSubmesh;
     geo->DrawArgs["tower"] = towerWallSubmesh;
     geo->DrawArgs["gate"] = gateWallSubmesh;
     geo->DrawArgs["grid"] = gridSubmesh;
@@ -897,6 +914,8 @@ void ShapesApp::BuildShapeGeometry()
     geo->DrawArgs["diamond"] = diamondSubmesh;
     geo->DrawArgs["charm"] = charmSubmesh;
     geo->DrawArgs["prism"] = prismSubmesh;
+    geo->DrawArgs["torus"] = torusSubmesh;
+
 
 
     mGeometries[geo->Name] = std::move(geo);
@@ -1080,15 +1099,15 @@ void ShapesApp::BuildRenderItems()
     // grid
     BuildOneRenderItem("grid", XMMatrixScaling(2, 2, 2), XMMatrixTranslation(0.0f, 0.0f, 0.0f), index_cache++);
 
-    // OUTER
+    // OUTTER
     // front wall 
-    BuildOneRenderItem("outerWall", XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(0.0f, 19, -25.0f), index_cache++);
+    BuildOneRenderItem("outterWall", XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(0.0f, 19, -25.0f), index_cache++);
     // back wall
-    BuildOneRenderItem("outerWall", XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(0.0f, 19, 25.0f), index_cache++);
+    BuildOneRenderItem("outterWall", XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(0.0f, 19, 25.0f), index_cache++);
     // left wall 
-    BuildOneRenderItem("outerWall", XMMatrixRotationY(XMConvertToRadians(-90.0f)), XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(-25.0f, 19, 0.0f), index_cache++);
+    BuildOneRenderItem("outterWall", XMMatrixRotationY(XMConvertToRadians(-90.0f)), XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(-25.0f, 19, 0.0f), index_cache++);
     // right wall
-    BuildOneRenderItem("outerWall", XMMatrixRotationY(XMConvertToRadians(90.0f)), XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(25.0f, 19, 0.0f), index_cache++);
+    BuildOneRenderItem("outterWall", XMMatrixRotationY(XMConvertToRadians(90.0f)), XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(25.0f, 19, 0.0f), index_cache++);
     
     const int kNumWallWedges = 12;
     // front wedge loop
@@ -1236,8 +1255,11 @@ void ShapesApp::BuildRenderItems()
     BuildOneRenderItem("box", XMMatrixScaling(30, 40, 30), XMMatrixTranslation(0, 20, 0), index_cache++);
     
     // diamond
-    BuildOneRenderItem("diamond", XMMatrixScaling(3, 10, 3), XMMatrixTranslation(0.0f, 57, 0.0f), index_cache++);
+    BuildOneRenderItem("diamond", XMMatrixScaling(3, 10, 3), XMMatrixTranslation(0.0f, 52, 0.0f), index_cache++);
     
+    // torus
+    BuildOneRenderItem("torus", XMMatrixScaling(4, 3, 4), XMMatrixTranslation(0.0f, 40, 0.0f), index_cache++);
+
 
     for (int i = 0; i < 2; ++i)
     {
