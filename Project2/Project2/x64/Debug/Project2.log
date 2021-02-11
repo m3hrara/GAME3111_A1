@@ -1,2 +1,6 @@
 ﻿  Week4-1-ShapesAppUsingDescriptorTable.cpp
+C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1006,98): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1011,98): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1016,111): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1021,110): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   Project2.vcxproj -> C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\x64\Debug\Project2.exe
