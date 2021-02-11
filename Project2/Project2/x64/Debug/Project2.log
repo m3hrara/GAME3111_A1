@@ -1,33 +1,52 @@
-﻿  Week4-1-ShapesAppUsingDescriptorTable.cpp
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(812,61): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1068,134): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1072,87): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1076,140): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1080,138): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1087,97): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1089,96): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1097,142): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1101,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1105,107): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1109,151): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1115,142): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1119,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1123,106): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1127,150): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1133,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1137,140): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1141,106): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1145,150): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1151,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1155,140): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1159,105): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1163,149): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1184,100): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1186,95): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1188,99): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1190,94): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1197,87): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1202,134): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1207,142): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\Project2\Week4-1-ShapesAppUsingDescriptorTable.cpp(1212,142): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
-  Project2.vcxproj -> C:\Users\mehra\Desktop\T163\Semester IV\Advanced Graphics Programming\Assignment 1\GAME3111_A1\Project2\x64\Debug\Project2.exe
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(491,5): warning MSB8028: The intermediate directory (x64\Debug\) contains files shared from another project (Project2.vcxproj).  This can lead to incorrect clean and rebuild behavior.
+  Camera.cpp
+  d3dApp.cpp
+  d3dUtil.cpp
+  DDSTextureLoader.cpp
+  GameTimer.cpp
+  GeometryGenerator.cpp
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Common\GeometryGenerator.cpp(1003,48): warning C4305: 'argument': truncation from 'double' to 'float'
+  MathHelper.cpp
+  FrameResource.cpp
+  GAME3111_A1_MehraraSarabi_TrungLe.cpp
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(857,61): warning C4305: 'argument': truncation from 'double' to 'float'
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1115,134): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1119,87): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1123,140): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1127,138): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1133,209): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1137,209): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1141,189): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1145,188): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1152,97): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1154,96): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1162,142): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1166,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1170,107): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1174,151): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1180,142): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1184,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1188,106): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1192,150): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1198,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1202,140): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1206,106): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1210,150): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1216,141): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1220,140): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1224,105): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1228,149): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1234,187): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1238,187): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1242,195): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1246,196): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1269,100): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1271,95): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1273,99): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1275,94): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1282,87): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1287,134): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1292,142): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\Project2\GAME3111_A1_MehraraSarabi_TrungLe.cpp(1297,142): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Generating Code...
+  Project2.vcxproj -> C:\Users\ZBook\Google Drive\_git\_git_public\GAME3111_A1\Project2\x64\Debug\GAME3111_A1_MehraraSarabi_TrungLe.exe

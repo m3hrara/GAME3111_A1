@@ -24,6 +24,7 @@
     <ProjectGuid>{acc35ffe-def4-4aa1-8fa2-157ba769e32d}</ProjectGuid>
     <RootNamespace>Project2</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>GAME3111_A1_MehraraSarabi_TrungLe</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -147,7 +148,7 @@
     <ClCompile Include="..\..\Common\GeometryGenerator.cpp" />
     <ClCompile Include="..\..\Common\MathHelper.cpp" />
     <ClCompile Include="FrameResource.cpp" />
-    <ClCompile Include="Week4-1-ShapesAppUsingDescriptorTable.cpp" />
+    <ClCompile Include="GAME3111_A1_MehraraSarabi_TrungLe.cpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="Shaders\color.hlsl">
