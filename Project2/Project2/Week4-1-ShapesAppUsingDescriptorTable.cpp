@@ -593,10 +593,13 @@ void ShapesApp::BuildShapeGeometry()
     GeometryGenerator::MeshData grid = geoGen.CreateGrid(70.0f, 70.0f, 60, 40);
     GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
     GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(1.0f, 1.0f, 2.0f, 20, 20);
+    GeometryGenerator::MeshData rolo = geoGen.CreateCylinder(1.0f, 0.5f, 1.0f, 20, 20);
     GeometryGenerator::MeshData wedge = geoGen.CreateWedge(1.0, 1.0f, 1.0, 3); // MARY 1
     GeometryGenerator::MeshData cone = geoGen.CreateCone(1.0f, 2.0f, 20, 20); // MARY 1-2
     GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid(1.0, 1.0f, 20); // MARY 1-3
-    GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1.0f, 1.0f, 1.0f, 1); 
+    GeometryGenerator::MeshData truncatedPyramid = geoGen.CreateTruncatedPyramid(1.0, 1.0f, 0.5f, 1); // MARY 1-3
+    GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1.0f, 1.0f, 1.0f, 1);
+    GeometryGenerator::MeshData charm = geoGen.CreateDiamond(1.0f, 1.0f, 1.0f, 1);
     GeometryGenerator::MeshData prism = geoGen.CreateTriangularPrism(1.0f, 1.0f, 1);
 
     //
@@ -612,11 +615,14 @@ void ShapesApp::BuildShapeGeometry()
     UINT gridVertexOffset = gateVertexOffset + (UINT)gate.Vertices.size();
     UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
     UINT cylinderVertexOffset = sphereVertexOffset + (UINT)sphere.Vertices.size();
-    UINT wedgeVertexOffset = cylinderVertexOffset + (UINT)cylinder.Vertices.size(); // MARY 2
+    UINT roloVertexOffset = cylinderVertexOffset + (UINT)cylinder.Vertices.size(); // MARY 2
+    UINT wedgeVertexOffset = roloVertexOffset + (UINT)rolo.Vertices.size(); // MARY 2
     UINT coneVertexOffset = wedgeVertexOffset + (UINT)wedge.Vertices.size(); // MARY 2-2
     UINT pyramidVertexOffset = coneVertexOffset + (UINT)cone.Vertices.size(); // MARY 2-3
-    UINT diamondVertexOffset = pyramidVertexOffset + (UINT)pyramid.Vertices.size();
-    UINT prismVertexOffset = diamondVertexOffset + (UINT)diamond.Vertices.size();
+    UINT truncatedPyramidVertexOffset = pyramidVertexOffset + (UINT)pyramid.Vertices.size();
+    UINT diamondVertexOffset = truncatedPyramidVertexOffset + (UINT)truncatedPyramid.Vertices.size();
+    UINT charmVertexOffset = diamondVertexOffset + (UINT)diamond.Vertices.size();
+    UINT prismVertexOffset = charmVertexOffset + (UINT)charm.Vertices.size();
 
 
     // Cache the starting index for each object in the concatenated index buffer.
@@ -627,11 +633,14 @@ void ShapesApp::BuildShapeGeometry()
     UINT gridIndexOffset = gateIndexOffset + (UINT)gate.Indices32.size();
     UINT sphereIndexOffset = gridIndexOffset + (UINT)grid.Indices32.size();
     UINT cylinderIndexOffset = sphereIndexOffset + (UINT)sphere.Indices32.size();
-    UINT wedgeIndexOffset = cylinderIndexOffset + (UINT)cylinder.Indices32.size(); // MARY 3
+    UINT roloIndexOffset = cylinderIndexOffset + (UINT)cylinder.Indices32.size(); // MARY 3
+    UINT wedgeIndexOffset = roloIndexOffset + (UINT)rolo.Indices32.size(); // MARY 3
     UINT coneIndexOffset = wedgeIndexOffset + (UINT)wedge.Indices32.size(); // MARY 3-2
     UINT pyramidIndexOffset = coneIndexOffset + (UINT)cone.Indices32.size(); // MARY 3-3
-    UINT diamondIndexOffset = pyramidIndexOffset + (UINT)pyramid.Indices32.size();
-    UINT prismIndexOffset = diamondIndexOffset + (UINT)diamond.Indices32.size();
+    UINT truncatedPyramidIndexOffset = pyramidIndexOffset + (UINT)pyramid.Indices32.size();
+    UINT diamondIndexOffset = truncatedPyramidIndexOffset + (UINT)truncatedPyramid.Indices32.size();
+    UINT charmIndexOffset = diamondIndexOffset + (UINT)diamond.Indices32.size();
+    UINT prismIndexOffset = charmIndexOffset + (UINT)charm.Indices32.size();
 
 
 
@@ -672,6 +681,11 @@ void ShapesApp::BuildShapeGeometry()
     cylinderSubmesh.IndexCount = (UINT)cylinder.Indices32.size();
     cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
     cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
+    
+    SubmeshGeometry roloSubmesh;
+    roloSubmesh.IndexCount = (UINT)rolo.Indices32.size();
+    roloSubmesh.StartIndexLocation = roloIndexOffset;
+    roloSubmesh.BaseVertexLocation = roloVertexOffset;
 
     // MARY 4
     SubmeshGeometry wedgeSubmesh;
@@ -691,10 +705,20 @@ void ShapesApp::BuildShapeGeometry()
     pyramidSubmesh.StartIndexLocation = pyramidIndexOffset;
     pyramidSubmesh.BaseVertexLocation = pyramidVertexOffset;
 
+    SubmeshGeometry truncatedPyramidSubmesh;
+    truncatedPyramidSubmesh.IndexCount = (UINT)truncatedPyramid.Indices32.size();
+    truncatedPyramidSubmesh.StartIndexLocation = truncatedPyramidIndexOffset;
+    truncatedPyramidSubmesh.BaseVertexLocation = truncatedPyramidVertexOffset;
+
     SubmeshGeometry diamondSubmesh;
     diamondSubmesh.IndexCount = (UINT)diamond.Indices32.size();
     diamondSubmesh.StartIndexLocation = diamondIndexOffset;
     diamondSubmesh.BaseVertexLocation = diamondVertexOffset;
+    
+    SubmeshGeometry charmSubmesh;
+    charmSubmesh.IndexCount = (UINT)charm.Indices32.size();
+    charmSubmesh.StartIndexLocation = charmIndexOffset;
+    charmSubmesh.BaseVertexLocation = charmVertexOffset;
 
     SubmeshGeometry prismSubmesh;
     prismSubmesh.IndexCount = (UINT)prism.Indices32.size();
@@ -714,10 +738,13 @@ void ShapesApp::BuildShapeGeometry()
         grid.Vertices.size() +
         sphere.Vertices.size() +
         cylinder.Vertices.size() +
+        rolo.Vertices.size() +
         wedge.Vertices.size() + // MARY 5
         cone.Vertices.size() + // MARY 5-2
         pyramid.Vertices.size() + // MARY 5-3
+        truncatedPyramid.Vertices.size() +
         diamond.Vertices.size() +
+        charm.Vertices.size() +
         prism.Vertices.size();
 
 
@@ -765,6 +792,12 @@ void ShapesApp::BuildShapeGeometry()
         vertices[k].Pos = cylinder.Vertices[i].Position;
         vertices[k].Color = XMFLOAT4(0.8f, 0.4f, 0.3f, 1.0f);
     }
+    
+    for (size_t i = 0; i < rolo.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = rolo.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::RoyalBlue);
+    }
 
     // MARY 6
     for (size_t i = 0; i < wedge.Vertices.size(); ++i, ++k)
@@ -785,10 +818,22 @@ void ShapesApp::BuildShapeGeometry()
         vertices[k].Color = XMFLOAT4(DirectX::Colors::DodgerBlue);
     }
 
+    for (size_t i = 0; i < truncatedPyramid.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = truncatedPyramid.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::RoyalBlue);
+    }
+
     for (size_t i = 0; i < diamond.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = diamond.Vertices[i].Position;
         vertices[k].Color = XMFLOAT4(DirectX::Colors::Crimson);
+    }
+    
+    for (size_t i = 0; i < charm.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = charm.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::DarkGoldenrod);
     }
 
     for (size_t i = 0; i < prism.Vertices.size(); ++i, ++k)
@@ -804,10 +849,13 @@ void ShapesApp::BuildShapeGeometry()
     indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
     indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
     indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
+    indices.insert(indices.end(), std::begin(rolo.GetIndices16()), std::end(rolo.GetIndices16()));
     indices.insert(indices.end(), std::begin(wedge.GetIndices16()), std::end(wedge.GetIndices16())); // MARY 7
     indices.insert(indices.end(), std::begin(cone.GetIndices16()), std::end(cone.GetIndices16())); // MARY 7-2
     indices.insert(indices.end(), std::begin(pyramid.GetIndices16()), std::end(pyramid.GetIndices16())); // MARY 7-3
+    indices.insert(indices.end(), std::begin(truncatedPyramid.GetIndices16()), std::end(truncatedPyramid.GetIndices16()));
     indices.insert(indices.end(), std::begin(diamond.GetIndices16()), std::end(diamond.GetIndices16()));
+    indices.insert(indices.end(), std::begin(charm.GetIndices16()), std::end(charm.GetIndices16()));
     indices.insert(indices.end(), std::begin(prism.GetIndices16()), std::end(prism.GetIndices16()));
 
 
@@ -841,10 +889,13 @@ void ShapesApp::BuildShapeGeometry()
     geo->DrawArgs["grid"] = gridSubmesh;
     geo->DrawArgs["sphere"] = sphereSubmesh;
     geo->DrawArgs["cylinder"] = cylinderSubmesh;
+    geo->DrawArgs["rolo"] = roloSubmesh;
     geo->DrawArgs["wedge"] = wedgeSubmesh; // MARY 8
     geo->DrawArgs["cone"] = coneSubmesh; // MARY 8-2
     geo->DrawArgs["pyramid"] = pyramidSubmesh; // MARY 8-3
+    geo->DrawArgs["truncatedPyramid"] = truncatedPyramidSubmesh;
     geo->DrawArgs["diamond"] = diamondSubmesh;
+    geo->DrawArgs["charm"] = charmSubmesh;
     geo->DrawArgs["prism"] = prismSubmesh;
 
 
@@ -1026,10 +1077,6 @@ void ShapesApp::BuildRenderItems()
     
     UINT index_cache = 0;
 
-    BuildOneRenderItem("box", XMMatrixScaling(1, 1, 1), XMMatrixTranslation(0.0f, 17, 0.0f), index_cache++);
-    //BuildOneRenderItem("cone", XMMatrixScaling(2, 2, 2), XMMatrixTranslation(0.0f, 0.0f, 0.0f), index_cache++);
-    BuildOneRenderItem("cylinder", XMMatrixScaling(1, 1, 1), XMMatrixTranslation(0.0f, 17, 0.0f), index_cache++);
-
     // grid
     BuildOneRenderItem("grid", XMMatrixScaling(2, 2, 2), XMMatrixTranslation(0.0f, 0.0f, 0.0f), index_cache++);
 
@@ -1061,6 +1108,24 @@ void ShapesApp::BuildRenderItems()
         BuildOneRenderItem("wedge", XMMatrixRotationY(XMConvertToRadians(90)), XMMatrixScaling(2, 2, 2), XMMatrixTranslation(26, 40, -20 + i * 4), index_cache++); //step = 4, min = -20
     }
     
+    const int kNumWallPyramids = 6;
+    // left pyramid loop
+    for (int i = 0; i < kNumWallPyramids; ++i){
+        BuildOneRenderItem("truncatedPyramid", XMMatrixRotationRollPitchYaw(XMConvertToRadians(0), XMConvertToRadians(0), XMConvertToRadians(90)), XMMatrixScaling(3, 2, 3), XMMatrixTranslation(-28, 34, -17.5 + i * 7), index_cache++); //step = 4, min = -20
+    }
+    // right pyramid loop
+    for (int i = 0; i < kNumWallPyramids; ++i) {
+        BuildOneRenderItem("truncatedPyramid", XMMatrixRotationRollPitchYaw(XMConvertToRadians(0), XMConvertToRadians(0), XMConvertToRadians(-90)), XMMatrixScaling(3, 2, 3), XMMatrixTranslation(28, 34, -17.5 + i * 7), index_cache++); //step = 4, min = -20
+    }
+    // front rolo loop
+    for (int i = 0; i < kNumWallPyramids; ++i) {
+        BuildOneRenderItem("rolo", XMMatrixRotationRollPitchYaw(XMConvertToRadians(-90), XMConvertToRadians(0), XMConvertToRadians(0)), XMMatrixScaling(2, 2, 2), XMMatrixTranslation(-17.5 + i * 7, 34, -28), index_cache++); //step = 4, min = -20
+    }
+    // back rolo loop
+    for (int i = 0; i < kNumWallPyramids; ++i) {
+        BuildOneRenderItem("rolo", XMMatrixRotationRollPitchYaw(XMConvertToRadians(90), XMConvertToRadians(0), XMConvertToRadians(0)), XMMatrixScaling(2, 2, 2), XMMatrixTranslation(-17.5 + i * 7, 34, 28), index_cache++); //step = 4, min = -20
+    }
+
     // outer towers
     for (int i = 0; i < 2; ++i)
     {
@@ -1144,9 +1209,27 @@ void ShapesApp::BuildRenderItems()
         BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(180)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(28, 50, 24 + i * 2), index_cache++);
     }
 
+    const int kNumDiamonds = 2;
+    // front charms
+    for (int i = 0; i < kNumDiamonds; ++i) {
+        BuildOneRenderItem("charm", XMMatrixRotationRollPitchYaw(XMConvertToRadians(0), XMConvertToRadians(45), XMConvertToRadians(0)), XMMatrixScaling(3, 8, 3), XMMatrixTranslation(-25 + i * 50, 34, -29), index_cache++);
+    }
+    // back charms
+    for (int i = 0; i < kNumDiamonds; ++i) {
+        BuildOneRenderItem("charm", XMMatrixRotationRollPitchYaw(XMConvertToRadians(0), XMConvertToRadians(45), XMConvertToRadians(0)), XMMatrixScaling(3, 8, 3), XMMatrixTranslation(-25 + i * 50, 34, 29), index_cache++);
+    }
+    // left charms
+    for (int i = 0; i < kNumDiamonds; ++i) {
+        BuildOneRenderItem("charm", XMMatrixRotationRollPitchYaw(XMConvertToRadians(0), XMConvertToRadians(45), XMConvertToRadians(0)), XMMatrixScaling(3, 8, 3), XMMatrixTranslation(29, 34, -25 + i * 50), index_cache++);
+    }
+    // right charms
+    for (int i = 0; i < kNumDiamonds; ++i) {
+        BuildOneRenderItem("charm", XMMatrixRotationRollPitchYaw(XMConvertToRadians(0), XMConvertToRadians(45), XMConvertToRadians(0)), XMMatrixScaling(3, 8, 3), XMMatrixTranslation(-29, 34, -25 + i * 50), index_cache++);
+    }
 
-    // gate
+    // gates
     BuildOneRenderItem("gate", XMMatrixScaling(16, 24, 5), XMMatrixTranslation(0.0f, 11, -25), index_cache++);
+    BuildOneRenderItem("gate", XMMatrixScaling(10, 20, 5), XMMatrixTranslation(0.0f, 11, -12.7f), index_cache++);
     
     //INNER
     // inner building

@@ -136,18 +136,16 @@ public:
 	MeshData CreateCone(float bottomRadius, float height, uint32 sliceCount, uint32 stackCount);
 	
 	///<summary>
-	/// Creates a cone parallel to the y-axis, and centered about the origin.  
-	/// The bottom radius can vary
-	/// The slices and stacks parameters control the degree of tessellation.
-	///</summary>
-	MeshData CreateFrustum(float bottomRadius, float height, uint32 sliceCount, uint32 stackCount);
-
-	///<summary>
 	/// Creates a pyramid which is basically a cone with a square as a base
 	/// The width and height can vary
 	/// The stacks parameters control the degree of tessellation.
 	///</summary>
 	MeshData CreatePyramid(float width, float height, uint32 stackCount);
+
+	///<summary>
+	/// Creates a 4 sided-pyramid without the tip, centered at the origin with the given dimensions
+	///</summary>
+	MeshData CreateTruncatedPyramid(float bottom_width, float height, float top_width, uint32 numSubdivisions);
 
 private:
 	
