@@ -588,7 +588,7 @@ void ShapesApp::BuildShapeGeometry()
 	GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1.0f, 2.0f, 1.0f, 1);// ADD HERE
 	GeometryGenerator::MeshData prism = geoGen.CreateTriangularPrism(3.0f, 6.0f, 1);
 	GeometryGenerator::MeshData box = geoGen.CreateBox(1.0f,1.0f, 1.0f, 3);
-	GeometryGenerator::MeshData grid = geoGen.CreateGrid(50.0f, 50.0f, 60, 40);
+	GeometryGenerator::MeshData grid = geoGen.CreateGrid(70.0f, 70.0f, 60, 40);
 	GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
 	GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(0.5f, 0.5f, 1.0f, 20, 20);
     GeometryGenerator::MeshData wedge = geoGen.CreateWedge(1.0, 1.0f, 1.0, 3); // MARY 1
@@ -722,7 +722,7 @@ void ShapesApp::BuildShapeGeometry()
 	for(size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
 	{
 		vertices[k].Pos = cylinder.Vertices[i].Position;
-		vertices[k].Color = XMFLOAT4(0.96f, 0.87f, 0.7f,1.0f);
+		vertices[k].Color = XMFLOAT4(0.8f, 0.4f, 0.3f,1.0f);
 	}
 
 	/*for (size_t i = 0; i < diamond.Vertices.size(); ++i, ++k)
@@ -980,9 +980,24 @@ void ShapesApp::BuildRenderItems()
         // right cones
         BuildOneRenderItem("cone", XMMatrixScaling(2.5f, 8.0f, 2.5f), XMMatrixTranslation(9.0f, 26.0f, -9.0f + i * 18.0f), ++index_cache);
 
-        // 10 indeces so far (index=9)
+    }
+    // outter towers
+    for (int i = 0; i < 2; ++i)
+    {
+        // left towers
+        BuildOneRenderItem("box", XMMatrixScaling(5.0f, 22.0f, 5.0f), XMMatrixTranslation(-14.0f, 11.0f, -14.0f + i * 28.0f), ++index_cache);
+        //right towers
+        BuildOneRenderItem("box", XMMatrixScaling(5.0f, 22.0f, 5.0f), XMMatrixTranslation(14.0f, 11.0f, -14.0f + i * 28.0f), ++index_cache);
     }
 
+    // left wall 
+    BuildOneRenderItem("box", XMMatrixScaling(3.0f, 20.0f, 23.0f), XMMatrixTranslation(-14.0f, 10.0f, 0.0f), 14);
+    //right wall
+    BuildOneRenderItem("box", XMMatrixScaling(3.0f, 20.0f, 23.0f), XMMatrixTranslation(14.0f, 10.0f, 0.0f), 15);
+    // front wall 
+    BuildOneRenderItem("box", XMMatrixScaling(23.0f, 20.0f, 3.0f), XMMatrixTranslation(0.0f, 10.0f, -14.0f), 16);
+    //back wall
+    BuildOneRenderItem("box", XMMatrixScaling(23.0f, 20.0f, 3.0f), XMMatrixTranslation(0.0f, 10.0f, +14.0f), 17);
 	// All the render items are opaque.
 	for(auto& e : mAllRitems)
 		mOpaqueRitems.push_back(e.get());
