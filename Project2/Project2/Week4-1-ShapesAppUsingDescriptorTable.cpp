@@ -16,6 +16,17 @@ using namespace DirectX::PackedVector;
 
 const int gNumFrameResources = 3;
 
+enum class ShapeType {
+	kBox = 0,
+	kSphere,
+	kGeosphere,
+	kCylinder,
+	kGrid,
+	kQuad,
+	kDiamond,
+	kUndefined
+};
+
 // Lightweight structure stores parameters to draw a shape.  This will
 // vary from app-to-app.
 struct RenderItem
@@ -78,6 +89,7 @@ private:
     void BuildShapeGeometry();
     void BuildPSOs();
     void BuildFrameResources();
+	void BuildOneRenderItem(std::string shape_type, UINT obj_idx, XMMATRIX scale_matrix, XMMATRIX translate_matrix);
     void BuildRenderItems();
     void DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
  
@@ -540,14 +552,45 @@ void ShapesApp::BuildShadersAndInputLayout()
         { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
     };
 }
+//
+//void ShapesApp::BuildOneShapeGeometry(UINT idx_count, UINT idx_offset, UINT vert_offset, ShapeType shape_type) {
+//	
+//	
+//	
+//	
+//	
+//	switch (shape_type)
+//	{
+//	case ShapeType::kBox:
+//		break;
+//	case ShapeType::kSphere:
+//		break;
+//	case ShapeType::kGeosphere:
+//		break;
+//	case ShapeType::kCylinder:
+//		break;
+//	case ShapeType::kGrid:
+//		break;
+//	case ShapeType::kQuad:
+//		break;
+//	case ShapeType::kDiamond:
+//		break;
+//	case ShapeType::kUndefined:
+//		break;
+//	default:
+//		break;
+//	}
+//}
 
 void ShapesApp::BuildShapeGeometry()
 {
     GeometryGenerator geoGen;
-	GeometryGenerator::MeshData box = geoGen.CreateBox(1.5f, 0.5f, 1.5f, 3);
+	GeometryGenerator::MeshData box = geoGen.CreateBox(1.5f, 0.5f, 1.5f, 3); // ADD HERE
 	GeometryGenerator::MeshData grid = geoGen.CreateGrid(20.0f, 30.0f, 60, 40);
 	GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
 	GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(0.5f, 0.3f, 3.0f, 20, 20);
+	GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1.0f, 2.0f, 1.0f, 1);
+	GeometryGenerator::MeshData prism = geoGen.CreateTriangularPrism(3.0f, 6.0f, 1);
 
 	//
 	// We are concatenating all the geometry into one big vertex/index buffer.  So
@@ -555,21 +598,25 @@ void ShapesApp::BuildShapeGeometry()
 	//
 
 	// Cache the vertex offsets to each object in the concatenated vertex buffer.
-	UINT boxVertexOffset = 0;
+	UINT boxVertexOffset = 0; // ADD HERE
 	UINT gridVertexOffset = (UINT)box.Vertices.size();
 	UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
 	UINT cylinderVertexOffset = sphereVertexOffset + (UINT)sphere.Vertices.size();
+	UINT diamond_vert_offset = cylinderVertexOffset + (UINT)cylinder.Vertices.size();
+	UINT prism_vert_offset = diamond_vert_offset + (UINT)diamond.Vertices.size();
 
 	// Cache the starting index for each object in the concatenated index buffer.
-	UINT boxIndexOffset = 0;
+	UINT boxIndexOffset = 0; // ADD HERE
 	UINT gridIndexOffset = (UINT)box.Indices32.size();
 	UINT sphereIndexOffset = gridIndexOffset + (UINT)grid.Indices32.size();
 	UINT cylinderIndexOffset = sphereIndexOffset + (UINT)sphere.Indices32.size();
+	UINT diamond_idx_offset = cylinderIndexOffset + (UINT)cylinder.Indices32.size();
+	UINT prism_idx_offset = diamond_idx_offset + (UINT)diamond.Indices32.size();
 
     // Define the SubmeshGeometry that cover different 
     // regions of the vertex/index buffers.
 
-	SubmeshGeometry boxSubmesh;
+	SubmeshGeometry boxSubmesh; // ADD HERE
 	boxSubmesh.IndexCount = (UINT)box.Indices32.size();
 	boxSubmesh.StartIndexLocation = boxIndexOffset;
 	boxSubmesh.BaseVertexLocation = boxVertexOffset;
@@ -589,6 +636,16 @@ void ShapesApp::BuildShapeGeometry()
 	cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
 	cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
 
+	SubmeshGeometry diamond_submesh;
+	diamond_submesh.IndexCount = (UINT)diamond.Indices32.size();
+	diamond_submesh.StartIndexLocation = diamond_idx_offset;
+	diamond_submesh.BaseVertexLocation = diamond_vert_offset;
+	
+	SubmeshGeometry prism_submesh;
+	prism_submesh.IndexCount = (UINT)prism.Indices32.size();
+	prism_submesh.StartIndexLocation = prism_idx_offset;
+	prism_submesh.BaseVertexLocation = prism_vert_offset;
+
 	//
 	// Extract the vertex elements we are interested in and pack the
 	// vertices of all the meshes into one vertex buffer.
@@ -598,12 +655,14 @@ void ShapesApp::BuildShapeGeometry()
 		box.Vertices.size() +
 		grid.Vertices.size() +
 		sphere.Vertices.size() +
-		cylinder.Vertices.size();
+		cylinder.Vertices.size() + 
+		diamond.Vertices.size() +
+		prism.Vertices.size(); // ADD HERE
 
 	std::vector<Vertex> vertices(totalVertexCount);
 
 	UINT k = 0;
-	for(size_t i = 0; i < box.Vertices.size(); ++i, ++k)
+	for(size_t i = 0; i < box.Vertices.size(); ++i, ++k) // ADD HERE
 	{
 		vertices[k].Pos = box.Vertices[i].Position;
         vertices[k].Color = XMFLOAT4(DirectX::Colors::DarkGreen);
@@ -627,11 +686,25 @@ void ShapesApp::BuildShapeGeometry()
 		vertices[k].Color = XMFLOAT4(DirectX::Colors::SteelBlue);
 	}
 
+	for (size_t i = 0; i < diamond.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = diamond.Vertices[i].Position;
+		vertices[k].Color = XMFLOAT4(DirectX::Colors::AliceBlue);
+	}
+
+	for (size_t i = 0; i < prism.Vertices.size(); ++i, ++k)
+	{
+		vertices[k].Pos = prism.Vertices[i].Position;
+		vertices[k].Color = XMFLOAT4(DirectX::Colors::Red);
+	}
+
 	std::vector<std::uint16_t> indices;
-	indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16()));
+	indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16())); // ADD HERE
 	indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
 	indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
 	indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
+	indices.insert(indices.end(), std::begin(diamond.GetIndices16()), std::end(diamond.GetIndices16()));
+	indices.insert(indices.end(), std::begin(prism.GetIndices16()), std::end(prism.GetIndices16()));
 
     const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
     const UINT ibByteSize = (UINT)indices.size()  * sizeof(std::uint16_t);
@@ -656,10 +729,12 @@ void ShapesApp::BuildShapeGeometry()
 	geo->IndexFormat = DXGI_FORMAT_R16_UINT;
 	geo->IndexBufferByteSize = ibByteSize;
 
-	geo->DrawArgs["box"] = boxSubmesh;
+	geo->DrawArgs["box"] = boxSubmesh; // ADD HERE
 	geo->DrawArgs["grid"] = gridSubmesh;
 	geo->DrawArgs["sphere"] = sphereSubmesh;
 	geo->DrawArgs["cylinder"] = cylinderSubmesh;
+	geo->DrawArgs["diamond"] = diamond_submesh;
+	geo->DrawArgs["prism"] = prism_submesh;
 
 	mGeometries[geo->Name] = std::move(geo);
 }
@@ -716,9 +791,21 @@ void ShapesApp::BuildFrameResources()
     }
 }
 
+void ShapesApp::BuildOneRenderItem(std::string shape_type, UINT obj_idx, XMMATRIX scale_matrix, XMMATRIX translate_matrix) {
+	auto shape_render_item = std::make_unique<RenderItem>();
+	XMStoreFloat4x4(&shape_render_item->World, scale_matrix * translate_matrix);
+	shape_render_item->ObjCBIndex = obj_idx;
+	shape_render_item->Geo = mGeometries["shapeGeo"].get();
+	shape_render_item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	shape_render_item->IndexCount = shape_render_item->Geo->DrawArgs[shape_type].IndexCount;
+	shape_render_item->StartIndexLocation = shape_render_item->Geo->DrawArgs[shape_type].StartIndexLocation;
+	shape_render_item->BaseVertexLocation = shape_render_item->Geo->DrawArgs[shape_type].BaseVertexLocation;
+	mAllRitems.push_back(std::move(shape_render_item));
+}
+
 void ShapesApp::BuildRenderItems()
 {
-	auto boxRitem = std::make_unique<RenderItem>();
+	/*auto boxRitem = std::make_unique<RenderItem>();
 	XMStoreFloat4x4(&boxRitem->World, XMMatrixScaling(2.0f, 2.0f, 2.0f)*XMMatrixTranslation(0.0f, 0.5f, 0.0f));
 	boxRitem->ObjCBIndex = 0;
 	boxRitem->Geo = mGeometries["shapeGeo"].get();
@@ -726,11 +813,15 @@ void ShapesApp::BuildRenderItems()
 	boxRitem->IndexCount = boxRitem->Geo->DrawArgs["box"].IndexCount;
 	boxRitem->StartIndexLocation = boxRitem->Geo->DrawArgs["box"].StartIndexLocation;
 	boxRitem->BaseVertexLocation = boxRitem->Geo->DrawArgs["box"].BaseVertexLocation;
-	mAllRitems.push_back(std::move(boxRitem));
+	mAllRitems.push_back(std::move(boxRitem));*/
+
+	BuildOneRenderItem("box", 0, XMMatrixScaling(2.0f, 2.0f, 2.0f), XMMatrixTranslation(0.0f, 0.5f, 0.0f));
+	BuildOneRenderItem("diamond", 1, XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixTranslation(0.0f, 0.0f, 0.0f));
+	BuildOneRenderItem("prism", 2, XMMatrixScaling(2.0f, 2.0f, 2.0f), XMMatrixTranslation(0.0f, 0.5f, 0.0f));
 
     auto gridRitem = std::make_unique<RenderItem>();
     gridRitem->World = MathHelper::Identity4x4();
-	gridRitem->ObjCBIndex = 1;
+	gridRitem->ObjCBIndex = 3;
 	gridRitem->Geo = mGeometries["shapeGeo"].get();
 	gridRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
     gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
@@ -738,7 +829,7 @@ void ShapesApp::BuildRenderItems()
     gridRitem->BaseVertexLocation = gridRitem->Geo->DrawArgs["grid"].BaseVertexLocation;
 	mAllRitems.push_back(std::move(gridRitem));
 
-	UINT objCBIndex = 2;
+	UINT objCBIndex = 4;
 	for(int i = 0; i < 5; ++i)
 	{
 		auto leftCylRitem = std::make_unique<RenderItem>();
