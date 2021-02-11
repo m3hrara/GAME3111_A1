@@ -86,12 +86,15 @@ private:
     void BuildConstantBufferViews();
     void BuildRootSignature();
     void BuildShadersAndInputLayout();
+    void BuildOneShapeGeometry(GeometryGenerator::MeshData mesh, SubmeshGeometry& submesh, UINT& vert_offset, UINT& idx_offset);
+    void BuildPositionAndColorForAllVertices(GeometryGenerator::MeshData mesh, XMFLOAT4 mesh_color, std::vector<Vertex>& vertices, UINT& vert_idx, std::vector<std::uint16_t>& indices);
     void BuildShapeGeometry();
     void BuildPSOs();
     void BuildFrameResources();
     void BuildRenderItems();
     void DrawRenderItems(ID3D12GraphicsCommandList* cmdList, const std::vector<RenderItem*>& ritems);
     void BuildOneRenderItem(std::string shape_type, XMMATRIX scale_matrix, XMMATRIX translate_matrix, UINT obj_idx);
+    void BuildOneRenderItem(std::string shape_type, XMMATRIX rotate_matrix, XMMATRIX scale_matrix, XMMATRIX translate_matrix, UINT obj_idx);
  
 private:
 
@@ -128,7 +131,7 @@ private:
 
     float mTheta = 1.5f*XM_PI;
     float mPhi = 0.2f*XM_PI;
-    float mRadius = 90.0f;
+    float mRadius = 120.0f;
 
     POINT mLastMousePos;
 };
@@ -552,61 +555,63 @@ void ShapesApp::BuildShadersAndInputLayout()
         { "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
     };
 }
-//
-//void ShapesApp::BuildOneShapeGeometry(UINT idx_count, UINT idx_offset, UINT vert_offset, ShapeType shape_type) {
-//	
-//	
-//	
-//	
-//	
-//	switch (shape_type)
-//	{
-//	case ShapeType::kBox:
-//		break;
-//	case ShapeType::kSphere:
-//		break;
-//	case ShapeType::kGeosphere:
-//		break;
-//	case ShapeType::kCylinder:
-//		break;
-//	case ShapeType::kGrid:
-//		break;
-//	case ShapeType::kQuad:
-//		break;
-//	case ShapeType::kDiamond:
-//		break;
-//	case ShapeType::kUndefined:
-//		break;
-//	default:
-//		break;
-//	}
-//}
+
+void ShapesApp::BuildOneShapeGeometry(GeometryGenerator::MeshData mesh, SubmeshGeometry &submesh, UINT &vert_offset, UINT &idx_offset) {
+    // Define the SubmeshGeometry that cover different 
+    // regions of the vertex/index buffers.
+    submesh.IndexCount = (UINT)mesh.Indices32.size();
+    submesh.StartIndexLocation = vert_offset;
+    submesh.BaseVertexLocation = idx_offset;
+    //
+    // We are concatenating all the geometry into one big vertex/index buffer.  So
+    // define the regions in the buffer each submesh covers.
+    //
+    // Cache the vertex offsets to each object in the concatenated vertex buffer.
+    vert_offset += (UINT)mesh.Vertices.size();
+
+    // Cache the starting index for each object in the concatenated index buffer.
+    idx_offset += (UINT)mesh.Indices32.size();
+}
+
+void ShapesApp::BuildPositionAndColorForAllVertices(GeometryGenerator::MeshData mesh, XMFLOAT4 mesh_color, std::vector<Vertex>& vertices, UINT& vert_idx, std::vector<std::uint16_t>& indices) {
+    for (size_t i = 0; i < mesh.Vertices.size(); ++i, ++vert_idx) // ADD HERE
+    {
+        vertices[vert_idx].Pos = mesh.Vertices[i].Position;
+        vertices[vert_idx].Color = XMFLOAT4(mesh_color);
+    }
+
+    indices.insert(indices.end(), std::begin(mesh.GetIndices16()), std::end(mesh.GetIndices16())); // ADD HERE
+}
 
 void ShapesApp::BuildShapeGeometry()
 {
     GeometryGenerator geoGen;
-	GeometryGenerator::MeshData box = geoGen.CreateBox(1.0f,1.0f, 1.0f, 3);
-	GeometryGenerator::MeshData grid = geoGen.CreateGrid(70.0f, 70.0f, 60, 40);
-	GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
-	GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(0.5f, 0.5f, 1.0f, 20, 20);
+    GeometryGenerator::MeshData box = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); // ADD HERE
+    GeometryGenerator::MeshData outerWall = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); 
+    GeometryGenerator::MeshData tower = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); 
+    GeometryGenerator::MeshData gate = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); 
+    GeometryGenerator::MeshData grid = geoGen.CreateGrid(70.0f, 70.0f, 60, 40);
+    GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
+    GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(1.0f, 2.0f, 1.0f, 20, 20);
     GeometryGenerator::MeshData wedge = geoGen.CreateWedge(1.0, 1.0f, 1.0, 3); // MARY 1
-    GeometryGenerator::MeshData cone = geoGen.CreateCone(1.0f, 1.0f, 20, 20); // MARY 1-2
+    GeometryGenerator::MeshData cone = geoGen.CreateCone(1.0f, 2.0f, 20, 20); // MARY 1-2
     GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid(1.0, 1.0f, 20); // MARY 1-3
-    GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1.0f, 1.0f, 1.0f, 1); // ADD HERE
+    GeometryGenerator::MeshData diamond = geoGen.CreateDiamond(1.0f, 1.0f, 1.0f, 1); 
     GeometryGenerator::MeshData prism = geoGen.CreateTriangularPrism(1.0f, 1.0f, 1);
 
+    //
+    // We are concatenating all the geometry into one big vertex/index buffer.  So
+    // define the regions in the buffer each submesh covers.
+    //
 
-
-	//
-	// We are concatenating all the geometry into one big vertex/index buffer.  So
-	// define the regions in the buffer each submesh covers.
-	//
-
-	// Cache the vertex offsets to each object in the concatenated vertex buffer.
-	UINT boxVertexOffset = 0; // ADD HERE
-	UINT gridVertexOffset = (UINT)box.Vertices.size();
-	UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
-	UINT cylinderVertexOffset = sphereVertexOffset + (UINT)sphere.Vertices.size();
+    // Cache the vertex offsets to each object in the concatenated vertex buffer.
+    UINT boxVertexOffset = 0; // ADD HERE
+    UINT outerWallVertexOffset = boxVertexOffset + (UINT)box.Vertices.size();
+    UINT towerVertexOffset = outerWallVertexOffset + (UINT)outerWall.Vertices.size();
+    UINT gateVertexOffset = towerVertexOffset + (UINT)tower.Vertices.size();
+    UINT gridVertexOffset = gateVertexOffset + (UINT)gate.Vertices.size();
+    UINT sphereVertexOffset = gridVertexOffset + (UINT)grid.Vertices.size();
+    UINT cylinderVertexOffset = sphereVertexOffset + (UINT)sphere.Vertices.size();
     UINT wedgeVertexOffset = cylinderVertexOffset + (UINT)cylinder.Vertices.size(); // MARY 2
     UINT coneVertexOffset = wedgeVertexOffset + (UINT)wedge.Vertices.size(); // MARY 2-2
     UINT pyramidVertexOffset = coneVertexOffset + (UINT)cone.Vertices.size(); // MARY 2-3
@@ -614,11 +619,14 @@ void ShapesApp::BuildShapeGeometry()
     UINT prismVertexOffset = diamondVertexOffset + (UINT)diamond.Vertices.size();
 
 
-	// Cache the starting index for each object in the concatenated index buffer.
-	UINT boxIndexOffset = 0; // ADD HERE
-	UINT gridIndexOffset = (UINT)box.Indices32.size();
-	UINT sphereIndexOffset = gridIndexOffset + (UINT)grid.Indices32.size();
-	UINT cylinderIndexOffset = sphereIndexOffset + (UINT)sphere.Indices32.size();
+    // Cache the starting index for each object in the concatenated index buffer.
+    UINT boxIndexOffset = 0; // ADD HERE
+    UINT outerWallIndexOffset = boxIndexOffset + (UINT)box.Indices32.size();
+    UINT towerIndexOffset = outerWallIndexOffset + (UINT)outerWall.Indices32.size();
+    UINT gateIndexOffset = towerIndexOffset + (UINT)tower.Indices32.size();
+    UINT gridIndexOffset = gateIndexOffset + (UINT)gate.Indices32.size();
+    UINT sphereIndexOffset = gridIndexOffset + (UINT)grid.Indices32.size();
+    UINT cylinderIndexOffset = sphereIndexOffset + (UINT)sphere.Indices32.size();
     UINT wedgeIndexOffset = cylinderIndexOffset + (UINT)cylinder.Indices32.size(); // MARY 3
     UINT coneIndexOffset = wedgeIndexOffset + (UINT)wedge.Indices32.size(); // MARY 3-2
     UINT pyramidIndexOffset = coneIndexOffset + (UINT)cone.Indices32.size(); // MARY 3-3
@@ -630,25 +638,40 @@ void ShapesApp::BuildShapeGeometry()
     // Define the SubmeshGeometry that cover different 
     // regions of the vertex/index buffers.
 
-	SubmeshGeometry boxSubmesh; // ADD HERE
-	boxSubmesh.IndexCount = (UINT)box.Indices32.size();
-	boxSubmesh.StartIndexLocation = boxIndexOffset;
-	boxSubmesh.BaseVertexLocation = boxVertexOffset;
+    SubmeshGeometry boxSubmesh; // ADD HERE
+    boxSubmesh.IndexCount = (UINT)box.Indices32.size();
+    boxSubmesh.StartIndexLocation = boxIndexOffset;
+    boxSubmesh.BaseVertexLocation = boxVertexOffset;
 
-	SubmeshGeometry gridSubmesh;
-	gridSubmesh.IndexCount = (UINT)grid.Indices32.size();
-	gridSubmesh.StartIndexLocation = gridIndexOffset;
-	gridSubmesh.BaseVertexLocation = gridVertexOffset;
+    SubmeshGeometry outerWallSubmesh;
+    outerWallSubmesh.IndexCount = (UINT)outerWall.Indices32.size();
+    outerWallSubmesh.StartIndexLocation = outerWallIndexOffset;
+    outerWallSubmesh.BaseVertexLocation = outerWallVertexOffset;
+    
+    SubmeshGeometry towerWallSubmesh;
+    towerWallSubmesh.IndexCount = (UINT)tower.Indices32.size();
+    towerWallSubmesh.StartIndexLocation = towerIndexOffset;
+    towerWallSubmesh.BaseVertexLocation = towerVertexOffset;
+    
+    SubmeshGeometry gateWallSubmesh;
+    gateWallSubmesh.IndexCount = (UINT)gate.Indices32.size();
+    gateWallSubmesh.StartIndexLocation = gateIndexOffset;
+    gateWallSubmesh.BaseVertexLocation = gateVertexOffset;
+    
+    SubmeshGeometry gridSubmesh;
+    gridSubmesh.IndexCount = (UINT)grid.Indices32.size();
+    gridSubmesh.StartIndexLocation = gridIndexOffset;
+    gridSubmesh.BaseVertexLocation = gridVertexOffset;
 
-	SubmeshGeometry sphereSubmesh;
-	sphereSubmesh.IndexCount = (UINT)sphere.Indices32.size();
-	sphereSubmesh.StartIndexLocation = sphereIndexOffset;
-	sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
+    SubmeshGeometry sphereSubmesh;
+    sphereSubmesh.IndexCount = (UINT)sphere.Indices32.size();
+    sphereSubmesh.StartIndexLocation = sphereIndexOffset;
+    sphereSubmesh.BaseVertexLocation = sphereVertexOffset;
 
-	SubmeshGeometry cylinderSubmesh;
-	cylinderSubmesh.IndexCount = (UINT)cylinder.Indices32.size();
-	cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
-	cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
+    SubmeshGeometry cylinderSubmesh;
+    cylinderSubmesh.IndexCount = (UINT)cylinder.Indices32.size();
+    cylinderSubmesh.StartIndexLocation = cylinderIndexOffset;
+    cylinderSubmesh.BaseVertexLocation = cylinderVertexOffset;
 
     // MARY 4
     SubmeshGeometry wedgeSubmesh;
@@ -672,62 +695,82 @@ void ShapesApp::BuildShapeGeometry()
     diamondSubmesh.IndexCount = (UINT)diamond.Indices32.size();
     diamondSubmesh.StartIndexLocation = diamondIndexOffset;
     diamondSubmesh.BaseVertexLocation = diamondVertexOffset;
-    
+
     SubmeshGeometry prismSubmesh;
     prismSubmesh.IndexCount = (UINT)prism.Indices32.size();
     prismSubmesh.StartIndexLocation = prismIndexOffset;
     prismSubmesh.BaseVertexLocation = prismVertexOffset;
 
-	//
-	// Extract the vertex elements we are interested in and pack the
-	// vertices of all the meshes into one vertex buffer.
-	//
+    //
+    // Extract the vertex elements we are interested in and pack the
+    // vertices of all the meshes into one vertex buffer.
+    //
 
     auto totalVertexCount =
         box.Vertices.size() +
+        outerWall.Vertices.size() +
+        tower.Vertices.size() +
+        gate.Vertices.size() +
         grid.Vertices.size() +
         sphere.Vertices.size() +
-        cylinder.Vertices.size() +
         cylinder.Vertices.size() +
         wedge.Vertices.size() + // MARY 5
         cone.Vertices.size() + // MARY 5-2
         pyramid.Vertices.size() + // MARY 5-3
         diamond.Vertices.size() +
         prism.Vertices.size();
- 
 
-	std::vector<Vertex> vertices(totalVertexCount);
 
-	UINT k = 0;
-	for(size_t i = 0; i < box.Vertices.size(); ++i, ++k) // ADD HERE
-	{
-		vertices[k].Pos = box.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(0.63f, 0.32f, 0.17f,1.0f);
-	}
+    std::vector<Vertex> vertices(totalVertexCount);
 
-	for(size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = grid.Vertices[i].Position;
+    UINT k = 0;
+    for (size_t i = 0; i < box.Vertices.size(); ++i, ++k) // ADD HERE
+    {
+        vertices[k].Pos = box.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(0.63f, 0.32f, 0.17f, 1.0f);
+    }
+
+    for (size_t i = 0; i < outerWall.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = outerWall.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::AliceBlue);
+    }
+    
+    for (size_t i = 0; i < tower.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = tower.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::PowderBlue);
+    }
+    
+    for (size_t i = 0; i < gate.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = gate.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::Black);
+    }
+    
+    for (size_t i = 0; i < grid.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = grid.Vertices[i].Position;
         vertices[k].Color = XMFLOAT4(0.33f, 0.42f, 0.18f, 1.0f);
-	}
+    }
 
-	for(size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = sphere.Vertices[i].Position;
+    for (size_t i = 0; i < sphere.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = sphere.Vertices[i].Position;
         vertices[k].Color = XMFLOAT4(DirectX::Colors::Crimson);
-	}
+    }
 
-	for(size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
-	{
-		vertices[k].Pos = cylinder.Vertices[i].Position;
-		vertices[k].Color = XMFLOAT4(0.8f, 0.4f, 0.3f,1.0f);
-	}
+    for (size_t i = 0; i < cylinder.Vertices.size(); ++i, ++k)
+    {
+        vertices[k].Pos = cylinder.Vertices[i].Position;
+        vertices[k].Color = XMFLOAT4(0.8f, 0.4f, 0.3f, 1.0f);
+    }
 
     // MARY 6
     for (size_t i = 0; i < wedge.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = wedge.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Blue);
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::SteelBlue);
     }
     // MARY 6-2
     for (size_t i = 0; i < cone.Vertices.size(); ++i, ++k)
@@ -739,25 +782,28 @@ void ShapesApp::BuildShapeGeometry()
     for (size_t i = 0; i < pyramid.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = pyramid.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::IndianRed);
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::DodgerBlue);
     }
 
     for (size_t i = 0; i < diamond.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = diamond.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::AliceBlue);
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::Crimson);
     }
 
     for (size_t i = 0; i < prism.Vertices.size(); ++i, ++k)
     {
         vertices[k].Pos = prism.Vertices[i].Position;
-        vertices[k].Color = XMFLOAT4(DirectX::Colors::Red);
+        vertices[k].Color = XMFLOAT4(DirectX::Colors::DarkRed);
     }
-	std::vector<std::uint16_t> indices;
-	indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16())); // ADD HERE
-	indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
-	indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
-	indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
+    std::vector<std::uint16_t> indices;
+    indices.insert(indices.end(), std::begin(box.GetIndices16()), std::end(box.GetIndices16())); // ADD HERE
+    indices.insert(indices.end(), std::begin(outerWall.GetIndices16()), std::end(outerWall.GetIndices16()));
+    indices.insert(indices.end(), std::begin(tower.GetIndices16()), std::end(tower.GetIndices16()));
+    indices.insert(indices.end(), std::begin(gate.GetIndices16()), std::end(gate.GetIndices16()));
+    indices.insert(indices.end(), std::begin(grid.GetIndices16()), std::end(grid.GetIndices16()));
+    indices.insert(indices.end(), std::begin(sphere.GetIndices16()), std::end(sphere.GetIndices16()));
+    indices.insert(indices.end(), std::begin(cylinder.GetIndices16()), std::end(cylinder.GetIndices16()));
     indices.insert(indices.end(), std::begin(wedge.GetIndices16()), std::end(wedge.GetIndices16())); // MARY 7
     indices.insert(indices.end(), std::begin(cone.GetIndices16()), std::end(cone.GetIndices16())); // MARY 7-2
     indices.insert(indices.end(), std::begin(pyramid.GetIndices16()), std::end(pyramid.GetIndices16())); // MARY 7-3
@@ -765,34 +811,36 @@ void ShapesApp::BuildShapeGeometry()
     indices.insert(indices.end(), std::begin(prism.GetIndices16()), std::end(prism.GetIndices16()));
 
 
-
     const UINT vbByteSize = (UINT)vertices.size() * sizeof(Vertex);
-    const UINT ibByteSize = (UINT)indices.size()  * sizeof(std::uint16_t);
+    const UINT ibByteSize = (UINT)indices.size() * sizeof(std::uint16_t);
 
-	auto geo = std::make_unique<MeshGeometry>();
-	geo->Name = "shapeGeo";
+    auto geo = std::make_unique<MeshGeometry>();
+    geo->Name = "shapeGeo";
 
-	ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
-	CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
+    ThrowIfFailed(D3DCreateBlob(vbByteSize, &geo->VertexBufferCPU));
+    CopyMemory(geo->VertexBufferCPU->GetBufferPointer(), vertices.data(), vbByteSize);
 
-	ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
-	CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
+    ThrowIfFailed(D3DCreateBlob(ibByteSize, &geo->IndexBufferCPU));
+    CopyMemory(geo->IndexBufferCPU->GetBufferPointer(), indices.data(), ibByteSize);
 
-	geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), vertices.data(), vbByteSize, geo->VertexBufferUploader);
+    geo->VertexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+        mCommandList.Get(), vertices.data(), vbByteSize, geo->VertexBufferUploader);
 
-	geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
-		mCommandList.Get(), indices.data(), ibByteSize, geo->IndexBufferUploader);
+    geo->IndexBufferGPU = d3dUtil::CreateDefaultBuffer(md3dDevice.Get(),
+        mCommandList.Get(), indices.data(), ibByteSize, geo->IndexBufferUploader);
 
-	geo->VertexByteStride = sizeof(Vertex);
-	geo->VertexBufferByteSize = vbByteSize;
-	geo->IndexFormat = DXGI_FORMAT_R16_UINT;
-	geo->IndexBufferByteSize = ibByteSize;
+    geo->VertexByteStride = sizeof(Vertex);
+    geo->VertexBufferByteSize = vbByteSize;
+    geo->IndexFormat = DXGI_FORMAT_R16_UINT;
+    geo->IndexBufferByteSize = ibByteSize;
 
-	geo->DrawArgs["box"] = boxSubmesh; // ADD HERE
-	geo->DrawArgs["grid"] = gridSubmesh;
-	geo->DrawArgs["sphere"] = sphereSubmesh;
-	geo->DrawArgs["cylinder"] = cylinderSubmesh;
+    geo->DrawArgs["box"] = boxSubmesh; // ADD HERE
+    geo->DrawArgs["outerWall"] = outerWallSubmesh;
+    geo->DrawArgs["tower"] = towerWallSubmesh;
+    geo->DrawArgs["gate"] = gateWallSubmesh;
+    geo->DrawArgs["grid"] = gridSubmesh;
+    geo->DrawArgs["sphere"] = sphereSubmesh;
+    geo->DrawArgs["cylinder"] = cylinderSubmesh;
     geo->DrawArgs["wedge"] = wedgeSubmesh; // MARY 8
     geo->DrawArgs["cone"] = coneSubmesh; // MARY 8-2
     geo->DrawArgs["pyramid"] = pyramidSubmesh; // MARY 8-3
@@ -800,7 +848,7 @@ void ShapesApp::BuildShapeGeometry()
     geo->DrawArgs["prism"] = prismSubmesh;
 
 
-	mGeometries[geo->Name] = std::move(geo);
+    mGeometries[geo->Name] = std::move(geo);
 }
 
 void ShapesApp::BuildPSOs()
@@ -867,6 +915,20 @@ void ShapesApp::BuildOneRenderItem(std::string shape_type, XMMATRIX scale_matrix
     shape_render_item->BaseVertexLocation = shape_render_item->Geo->DrawArgs[shape_type].BaseVertexLocation;
     mAllRitems.push_back(std::move(shape_render_item));
 }
+
+void ShapesApp::BuildOneRenderItem(std::string shape_type, XMMATRIX rotate_matrix, XMMATRIX scale_matrix, XMMATRIX translate_matrix, UINT obj_idx)
+{
+    auto shape_render_item = std::make_unique<RenderItem>();
+    XMStoreFloat4x4(&shape_render_item->World, scale_matrix * rotate_matrix * translate_matrix);
+    shape_render_item->ObjCBIndex = obj_idx;
+    shape_render_item->Geo = mGeometries["shapeGeo"].get();
+    shape_render_item->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+    shape_render_item->IndexCount = shape_render_item->Geo->DrawArgs[shape_type].IndexCount;
+    shape_render_item->StartIndexLocation = shape_render_item->Geo->DrawArgs[shape_type].StartIndexLocation;
+    shape_render_item->BaseVertexLocation = shape_render_item->Geo->DrawArgs[shape_type].BaseVertexLocation;
+    mAllRitems.push_back(std::move(shape_render_item));
+}
+
 //
 //void ShapesApp::BuildRenderItems()
 //{
@@ -962,63 +1024,170 @@ void ShapesApp::BuildRenderItems()
 
     */
     
-    // grid
-    BuildOneRenderItem("grid", XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixTranslation(0.0f, 0.0f, 0.0f), 0);
-   // inner building
-    BuildOneRenderItem("box", XMMatrixScaling(14.0f, 16.0f, 14.0f), XMMatrixTranslation(0.0f, 8.0f, 0.0f), 1);
-    // left wall 
-    BuildOneRenderItem("box", XMMatrixScaling(3.0f, 20.0f, 23.0f), XMMatrixTranslation(-14.0f, 10.0f, 0.0f), 2);
-    // right wall
-    BuildOneRenderItem("box", XMMatrixScaling(3.0f, 20.0f, 23.0f), XMMatrixTranslation(14.0f, 10.0f, 0.0f), 3);
-    // front wall 
-    BuildOneRenderItem("box", XMMatrixScaling(23.0f, 20.0f, 3.0f), XMMatrixTranslation(0.0f, 10.0f, -14.0f), 4);
-    // back wall
-    BuildOneRenderItem("box", XMMatrixScaling(23.0f, 20.0f, 3.0f), XMMatrixTranslation(0.0f, 10.0f, +14.0f), 5);
-    // diamond
-    BuildOneRenderItem("diamond", XMMatrixScaling(2.0f, 8.0f, 2.0f), XMMatrixTranslation(0.0f, 20.0f, 0.0f), 6);
-    UINT index_cache = 6;
+    UINT index_cache = 0;
 
+    BuildOneRenderItem("box", XMMatrixScaling(1, 1, 1), XMMatrixTranslation(0.0f, 17, 0.0f), index_cache++);
+    //BuildOneRenderItem("cone", XMMatrixScaling(2, 2, 2), XMMatrixTranslation(0.0f, 0.0f, 0.0f), index_cache++);
+    BuildOneRenderItem("cylinder", XMMatrixScaling(1, 1, 1), XMMatrixTranslation(0.0f, 17, 0.0f), index_cache++);
+
+    // grid
+    BuildOneRenderItem("grid", XMMatrixScaling(2, 2, 2), XMMatrixTranslation(0.0f, 0.0f, 0.0f), index_cache++);
+
+    // OUTER
+    // front wall 
+    BuildOneRenderItem("outerWall", XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(0.0f, 19, -25.0f), index_cache++);
+    // back wall
+    BuildOneRenderItem("outerWall", XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(0.0f, 19, 25.0f), index_cache++);
+    // left wall 
+    BuildOneRenderItem("outerWall", XMMatrixRotationY(XMConvertToRadians(-90.0f)), XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(-25.0f, 19, 0.0f), index_cache++);
+    // right wall
+    BuildOneRenderItem("outerWall", XMMatrixRotationY(XMConvertToRadians(90.0f)), XMMatrixScaling(50.0f, 40, 4.0f), XMMatrixTranslation(25.0f, 19, 0.0f), index_cache++);
+    
+    const int kNumWallWedges = 12;
+    // front wedge loop
+    for (int i = 0; i < kNumWallWedges; ++i){
+        BuildOneRenderItem("wedge", XMMatrixRotationY(XMConvertToRadians(180.0f)), XMMatrixScaling(2, 2, 2), XMMatrixTranslation(-20 + i * 4, 40, -26), index_cache++); //step = 4, min = -20
+    }
+    // back wedge loop
+    for (int i = 0; i < kNumWallWedges; ++i){
+        BuildOneRenderItem("wedge", XMMatrixScaling(2, 2, 2), XMMatrixTranslation(-20 + i * 4, 40, 26), index_cache++); //step = 4, min = -20
+    }
+    // left wedge loop
+    for (int i = 0; i < kNumWallWedges; ++i){
+        BuildOneRenderItem("wedge", XMMatrixRotationY(XMConvertToRadians(-90)), XMMatrixScaling(2, 2, 2), XMMatrixTranslation(-26, 40, -20 + i * 4), index_cache++); //step = 4, min = -20
+    }
+    // right wedge loop
+    for (int i = 0; i < kNumWallWedges; ++i){
+        BuildOneRenderItem("wedge", XMMatrixRotationY(XMConvertToRadians(90)), XMMatrixScaling(2, 2, 2), XMMatrixTranslation(26, 40, -20 + i * 4), index_cache++); //step = 4, min = -20
+    }
+    
+    // outer towers
+    for (int i = 0; i < 2; ++i)
+    {
+        // left towers
+        BuildOneRenderItem("tower", XMMatrixScaling(8, 50, 8), XMMatrixTranslation(-25, 24, -25 + i * 50), index_cache++);
+        //right towers
+        BuildOneRenderItem("tower", XMMatrixScaling(8, 50, 8), XMMatrixTranslation(25, 24, -25 + i * 50), index_cache++);
+    }
+    
+    const int kNumPyramids = 4;
+    const int kHalfNumPyramids = 2;
+    //FL pyr
+    //front row pyr
+    for (int i = 0; i < kNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(-90)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(-28 + i * 2, 50, -28), index_cache++); //step = 2, min = -28
+    }
+    //back row pyr
+    for (int i = 0; i < kNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(90)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(-28 + i * 2, 50, -22), index_cache++);
+    }
+    //left col pyr
+    for (int i = 0; i < kHalfNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(-28, 50, -26 + i * 2), index_cache++);
+    }
+    //right col pyr
+    for (int i = 0; i < kHalfNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(180)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(-22, 50, -26 + i * 2), index_cache++);
+    }
+
+    //RL pyr
+    //front row pyr
+    for (int i = 0; i < kNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(-90)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(-28 + i * 2, 50, 28), index_cache++); //step = 2, min = -28
+    }
+    //back row pyr
+    for (int i = 0; i < kNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(90)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(-28 + i * 2, 50, 22), index_cache++);
+    }
+    //left col pyr
+    for (int i = 0; i < kHalfNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(-28, 50, 24 + i * 2), index_cache++);
+    }
+    //right col pyr
+    for (int i = 0; i < kHalfNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(180)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(-22, 50, 24 + i * 2), index_cache++);
+    }
+
+    //FR pyr
+    //front row pyr
+    for (int i = 0; i < kNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(-90)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(22 + i * 2, 50, -28), index_cache++); //step = 2, min = -28
+    }
+    //back row pyr
+    for (int i = 0; i < kNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(90)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(22 + i * 2, 50, -22), index_cache++);
+    }
+    //left col pyr
+    for (int i = 0; i < kHalfNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(22, 50, -26 + i * 2), index_cache++);
+    }
+    //right col pyr
+    for (int i = 0; i < kHalfNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(180)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(28, 50, -26 + i * 2), index_cache++);
+    }
+    
+    //RR pyr
+    //front row pyr
+    for (int i = 0; i < kNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(-90)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(22 + i * 2, 50, 22), index_cache++); //step = 2, min = -28
+    }
+    //back row pyr
+    for (int i = 0; i < kNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(90)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(22 + i * 2, 50, 28), index_cache++);
+    }
+    //left col pyr
+    for (int i = 0; i < kHalfNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(22, 50, 24 + i * 2), index_cache++);
+    }
+    //right col pyr
+    for (int i = 0; i < kHalfNumPyramids; ++i) {
+        BuildOneRenderItem("pyramid", XMMatrixRotationY(XMConvertToRadians(180)), XMMatrixScaling(2.4f, 2.4f, 2.4f), XMMatrixTranslation(28, 50, 24 + i * 2), index_cache++);
+    }
+
+
+    // gate
+    BuildOneRenderItem("gate", XMMatrixScaling(16, 24, 5), XMMatrixTranslation(0.0f, 11, -25), index_cache++);
+    
+    //INNER
+    // inner building
+    BuildOneRenderItem("box", XMMatrixScaling(30, 40, 30), XMMatrixTranslation(0, 20, 0), index_cache++);
+    
+    // diamond
+    BuildOneRenderItem("diamond", XMMatrixScaling(3, 10, 3), XMMatrixTranslation(0.0f, 57, 0.0f), index_cache++);
+    
 
     for (int i = 0; i < 2; ++i)
     {
         // left cylinders
-        BuildOneRenderItem("cylinder", XMMatrixScaling(3.0f, 22.0f, 3.0f), XMMatrixTranslation(-9.0f, 11.0f, -9.0f + i * 18.0f), ++index_cache);
+        BuildOneRenderItem("cylinder", XMMatrixScaling(1, 50, 1), XMMatrixTranslation(-15, 27, -15 + i * 30), index_cache++);
         // left cones
-        BuildOneRenderItem("cone", XMMatrixScaling(2.5f, 8.0f, 2.5f), XMMatrixTranslation(-9.0f, 26.0f, -9.0f + i * 18.0f), ++index_cache);
+        BuildOneRenderItem("cone", XMMatrixScaling(4, 7, 4), XMMatrixTranslation(-15, 55, -15 + i * 30), index_cache++);
         // right cylinders
-        BuildOneRenderItem("cylinder", XMMatrixScaling(3.0f, 22.0f, 3.0f), XMMatrixTranslation(9.0f, 11.0f, -9.0f + i * 18.0f), ++index_cache);
+        BuildOneRenderItem("cylinder", XMMatrixScaling(1, 50, 1), XMMatrixTranslation(15, 27, -15 + i * 30), index_cache++);
         // right cones
-        BuildOneRenderItem("cone", XMMatrixScaling(2.5f, 8.0f, 2.5f), XMMatrixTranslation(9.0f, 26.0f, -9.0f + i * 18.0f), ++index_cache);
-
+        BuildOneRenderItem("cone", XMMatrixScaling(4, 7, 4), XMMatrixTranslation(15, 55, -15 + i * 30), index_cache++);
     }
-    // outter towers
-    for (int i = 0; i < 2; ++i)
-    {
-        // left towers
-        BuildOneRenderItem("box", XMMatrixScaling(5.0f, 22.0f, 5.0f), XMMatrixTranslation(-14.0f, 11.0f, -14.0f + i * 28.0f), ++index_cache);
-        //right towers
-        BuildOneRenderItem("box", XMMatrixScaling(5.0f, 22.0f, 5.0f), XMMatrixTranslation(14.0f, 11.0f, -14.0f + i * 28.0f), ++index_cache);
-    }
+    
 
-    // lower prism loop
+    // front prism loop
     for (int i = 0; i < 7; ++i)
     {
-        BuildOneRenderItem("prism", XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixTranslation(-4.5f + i * 1.5, 16.5f, -6.0f), ++index_cache);
+        BuildOneRenderItem("prism", XMMatrixScaling(2, 2, 2), XMMatrixTranslation(-12 + i * 4, 41, -14), index_cache++); //step = 4, min = -12
     }
-    // upper prism loop
+    // back prism loop
     for (int i = 0; i < 7; ++i)
     {
-        BuildOneRenderItem("prism", XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixTranslation(-4.5f + i * 1.5, 16.5f, 6.0f), ++index_cache);
+        BuildOneRenderItem("prism", XMMatrixRotationY(XMConvertToRadians(180.0f)), XMMatrixScaling(2, 2, 2), XMMatrixTranslation(-12 + i * 4, 41, 14), index_cache++); //step = 4, min = -12
     }
     // left prism loop
     for (int i = 0; i < 7; ++i)
     {
-        BuildOneRenderItem("prism", XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixTranslation(-5.5f, 16.5f, 4.5f - i * 1.5), ++index_cache);
+        BuildOneRenderItem("prism", XMMatrixRotationY(XMConvertToRadians(90.0f)), XMMatrixScaling(2, 2, 2), XMMatrixTranslation(-14, 41, -12 + i * 4), index_cache++);
     }
     // right prism loop
     for (int i = 0; i < 7; ++i)
     {
-        BuildOneRenderItem("prism", XMMatrixScaling(1.0f, 1.0f, 1.0f), XMMatrixTranslation(5.5f, 16.5f, 4.5f - i * 1.5), ++index_cache);
+        BuildOneRenderItem("prism", XMMatrixRotationY(XMConvertToRadians(-90.0f)), XMMatrixScaling(2, 2, 2), XMMatrixTranslation(14, 41, -12 + i * 4), index_cache++);
     }
 
 	// All the render items are opaque.

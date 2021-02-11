@@ -115,9 +115,8 @@ public:
 	///</summary>
 	MeshData CreateDiamond(float width, float height, float depth, uint32 numSubdivisions);
 
-
 	///<summary>
-	/// Creates a diamond centered at the origin with the given dimensions
+	/// Creates a prism centered at the origin with the given dimensions
 	///</summary>
 	MeshData CreateTriangularPrism(float width, float height, uint32 numSubdivisions);
 
@@ -135,6 +134,13 @@ public:
 	/// The slices and stacks parameters control the degree of tessellation.
 	///</summary>
 	MeshData CreateCone(float bottomRadius, float height, uint32 sliceCount, uint32 stackCount);
+	
+	///<summary>
+	/// Creates a cone parallel to the y-axis, and centered about the origin.  
+	/// The bottom radius can vary
+	/// The slices and stacks parameters control the degree of tessellation.
+	///</summary>
+	MeshData CreateFrustum(float bottomRadius, float height, uint32 sliceCount, uint32 stackCount);
 
 	///<summary>
 	/// Creates a pyramid which is basically a cone with a square as a base
