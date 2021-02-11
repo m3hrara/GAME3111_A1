@@ -110,6 +110,27 @@ public:
 	///</summary>
     MeshData CreateQuad(float x, float y, float w, float h, float depth);
 	void Subdivide(MeshData& meshData);
+
+	///<summary>
+	/// Creates a wedge centered at the origin with the given dimensions, where each
+	/// face has m rows and n columns of vertices.
+	///</summary>
+	MeshData CreateWedge(float width, float height, float depth, uint32 numSubdivisions);
+
+	///<summary>
+	/// Creates a cone parallel to the y-axis, and centered about the origin.  
+	/// The bottom radius can vary
+	/// The slices and stacks parameters control the degree of tessellation.
+	///</summary>
+	MeshData CreateCone(float bottomRadius, float height, uint32 sliceCount, uint32 stackCount);
+
+	///<summary>
+	/// Creates a pyramid which is basically a cone with a square as a base
+	/// The width and height can vary
+	/// The stacks parameters control the degree of tessellation.
+	///</summary>
+	MeshData CreatePyramid(float width, float height, uint32 stackCount);
+
 private:
 	
     Vertex MidPoint(const Vertex& v0, const Vertex& v1);
