@@ -149,6 +149,8 @@ public:
 	///</summary>
 	MeshData CreatePyramid(float width, float height, uint32 stackCount);
 
+	MeshData CreateTorus(float outterradius, float innerRadius, uint32 sliceCount, uint32 stackCount);
+
 private:
 	
     Vertex MidPoint(const Vertex& v0, const Vertex& v1);
