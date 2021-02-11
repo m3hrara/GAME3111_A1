@@ -592,7 +592,7 @@ void ShapesApp::BuildShapeGeometry()
     GeometryGenerator::MeshData gate = geoGen.CreateBox(1.0f, 1.0f, 1.0f, 3); 
     GeometryGenerator::MeshData grid = geoGen.CreateGrid(70.0f, 70.0f, 60, 40);
     GeometryGenerator::MeshData sphere = geoGen.CreateSphere(0.5f, 20, 20);
-    GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(1.0f, 2.0f, 1.0f, 20, 20);
+    GeometryGenerator::MeshData cylinder = geoGen.CreateCylinder(1.0f, 1.0f, 2.0f, 20, 20);
     GeometryGenerator::MeshData wedge = geoGen.CreateWedge(1.0, 1.0f, 1.0, 3); // MARY 1
     GeometryGenerator::MeshData cone = geoGen.CreateCone(1.0f, 2.0f, 20, 20); // MARY 1-2
     GeometryGenerator::MeshData pyramid = geoGen.CreatePyramid(1.0, 1.0f, 20); // MARY 1-3
@@ -1159,13 +1159,13 @@ void ShapesApp::BuildRenderItems()
     for (int i = 0; i < 2; ++i)
     {
         // left cylinders
-        BuildOneRenderItem("cylinder", XMMatrixScaling(1, 50, 1), XMMatrixTranslation(-15, 27, -15 + i * 30), index_cache++);
+        BuildOneRenderItem("cylinder", XMMatrixScaling(2, 28, 2), XMMatrixTranslation(-15, 27, -15 + i * 30), index_cache++);
         // left cones
-        BuildOneRenderItem("cone", XMMatrixScaling(4, 7, 4), XMMatrixTranslation(-15, 55, -15 + i * 30), index_cache++);
+        BuildOneRenderItem("cone", XMMatrixScaling(4, 7, 4), XMMatrixTranslation(-15, 60, -15 + i * 30), index_cache++);
         // right cylinders
-        BuildOneRenderItem("cylinder", XMMatrixScaling(1, 50, 1), XMMatrixTranslation(15, 27, -15 + i * 30), index_cache++);
+        BuildOneRenderItem("cylinder", XMMatrixScaling(2, 28, 2), XMMatrixTranslation(15, 27, -15 + i * 30), index_cache++);
         // right cones
-        BuildOneRenderItem("cone", XMMatrixScaling(4, 7, 4), XMMatrixTranslation(15, 55, -15 + i * 30), index_cache++);
+        BuildOneRenderItem("cone", XMMatrixScaling(4, 7, 4), XMMatrixTranslation(15, 60, -15 + i * 30), index_cache++);
     }
     
 
